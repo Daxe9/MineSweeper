@@ -2,6 +2,14 @@
 #include <vector>
 #include <random>
 
+#define DEBUG 0
+
+#if DEBUG == 1
+#define LOG(x) std::cout << x << std::endl
+#else
+#define LOG(x)
+#endif
+
 using std::vector;
 using std::cout;
 using std::cin;
@@ -127,22 +135,35 @@ void controlNeighbours(vector<vector<Cell>> &matrix, int x, int y, int &neededCe
 
     for (auto [directionX, directionY]: direction) {
         try {
-            if (matrix.at(x + directionX).at(y + directionY).count == 0 &&
-                !matrix.at(x + directionX).at(y + directionY).visible) {
-                matrix.at(x + directionX).at(y + directionY).visible = true;
-
-                controlNeighbours(matrix, x + directionX, y + directionY, neededCellToExplore);
+            if (matrix.at(x).at(y).count == 0) {
+                if (matrix.at(x + directionX).at(y + directionY).count != -1 &&
+                    !matrix.at(x + directionX).at(y + directionY).visible) {
+                    matrix.at(x + directionX).at(y + directionY).visible = true;
+                    controlNeighbours(matrix, x + directionX, y + directionY, neededCellToExplore);
+                } else {
+                    throw std::exception();
+                }
             } else {
-                throw std::exception();
+                if (matrix.at(x + directionX).at(y + directionY).count == 0 &&
+                    !matrix.at(x + directionX).at(y + directionY).visible) {
+                    controlNeighbours(matrix, x + directionX, y + directionY, neededCellToExplore);
+                } else {
+                    throw std::exception();
+                }
             }
         } catch (std::exception &e) {
             continue;
         }
     }
+
 }
 
 int main() {
     int width = 5;
+
+    cout << "How long do you want your board to be: ";
+    cin >> width;
+
     int height = width;
 
     // bomb generator disciminant
@@ -156,7 +177,8 @@ int main() {
     int userX = 0, userY = 0;
     while (true) {
         if (neededCellToExplore == 0) {
-            cout << "YOU WIN!!!\n";
+            cout << "YOU WIN!!!\nThis is the full board";
+            printMatrix(matrix, true);
             break;
         }
         printMatrix(matrix, false);
@@ -166,7 +188,8 @@ int main() {
             cout << "Enter Y coordinate: ";
             cin >> userX;
         } while (userX >= width || userX < 0 || userY >= height || userY < 0);
-
+        LOG(userX);
+        LOG(userY);
         // process input
         if (matrix.at(userX).at(userY).count == -1) {
             cout << "THERE IS A BOMB AT (" << userY << ", " << userX << ")\nFINE\n";
