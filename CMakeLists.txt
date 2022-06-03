@@ -3,4 +3,5 @@ project(MineSweeper)
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_library(lib.h SHARED IMPORTED)
 add_executable(MineSweeper main.cpp)
