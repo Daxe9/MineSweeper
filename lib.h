@@ -59,9 +59,9 @@ void bombRandomizer(vector<vector<Cell>> &matrix, int discriminant) {
 int countBomb(vector<vector<Cell>> &matrix, int x, int y) {
     int counter = 0;
 
-    for (auto [directionX, directionY]: direction) {
+    for (auto &arr : direction) {
         try {
-            if (matrix.at(x + directionX).at(y + directionY).count == -1) {
+            if (matrix.at(x + arr[0]).at(y + arr[1]).count == -1) {
                 counter++;
             } else {
                 throw std::exception();
@@ -133,20 +133,20 @@ void controlNeighbours(vector<vector<Cell>> &matrix, int x, int y, int &neededCe
     matrix.at(x).at(y).visible = true;
     --neededCellToExplore;
 
-    for (auto [directionX, directionY]: direction) {
+    for (auto &arr : direction) {
         try {
             if (matrix.at(x).at(y).count == 0) {
-                if (matrix.at(x + directionX).at(y + directionY).count != -1 &&
-                    !matrix.at(x + directionX).at(y + directionY).visible) {
-                    matrix.at(x + directionX).at(y + directionY).visible = true;
-                    controlNeighbours(matrix, x + directionX, y + directionY, neededCellToExplore);
+                if (matrix.at(x + arr[0]).at(y + arr[1]).count != -1 &&
+                    !matrix.at(x + arr[0]).at(y + arr[1]).visible) {
+                    matrix.at(x + arr[0]).at(y + arr[1]).visible = true;
+                    controlNeighbours(matrix, x + arr[0], y + arr[1], neededCellToExplore);
                 } else {
                     throw std::exception();
                 }
             } else {
-                if (matrix.at(x + directionX).at(y + directionY).count == 0 &&
-                    !matrix.at(x + directionX).at(y + directionY).visible) {
-                    controlNeighbours(matrix, x + directionX, y + directionY, neededCellToExplore);
+                if (matrix.at(x + arr[0]).at(y + arr[1]).count == 0 &&
+                    !matrix.at(x + arr[0]).at(y + arr[1]).visible) {
+                    controlNeighbours(matrix, x + arr[0], y + arr[1], neededCellToExplore);
                 } else {
                     throw std::exception();
                 }
